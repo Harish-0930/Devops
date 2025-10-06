@@ -34,7 +34,7 @@ sudo vi /etc/httpd/conf/httpd.conf
 
 ## ✅ Scenario 2: Using `visudo` to Grant Sudo Access
 
-**📍 Task**: Allow user `kkfunda` to use `sudo`
+**📍 Task**: Allow user `hari` to use `sudo`
 
 ### ❌ Don't do this:
 ```bash
@@ -48,12 +48,12 @@ sudo visudo
 ```
 Add at the bottom:
 ```bash
-kkfunda ALL=(ALL) ALL
+hari ALL=(ALL) ALL
 ```
 
 ### 🔐 Passwordless sudo:
 ```bash
-kkfunda ALL=(ALL) NOPASSWD: ALL
+hari ALL=(ALL) NOPASSWD: ALL
 ```
 
 ---
