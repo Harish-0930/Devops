@@ -144,7 +144,7 @@ Output: `/root`
 
 ## 🧠 Real-Life Scenario:
 
-**You're logged in as `kkfunda` and need to install a package as root**
+**You're logged in as `hari` and need to install a package as root**
 
 ### Using `sudo su`:
 ```bash
