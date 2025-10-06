@@ -1,0 +1,202 @@
+# 📌 Linux Commands Guide  
+
+## 🔹 What is a Command?
+A **command** in Linux is a specific instruction given to the operating system to perform a task.
+
+## 🔹 What is a Program?
+A **program** is a collection of instructions that execute a specific task when run.
+
+---
+
+## 🖥️ 1. `clear` (Clear Terminal Screen)
+### **Description:**
+- The `clear` command is used to **clear the terminal screen**.
+- It removes all previous output, giving you a **clean workspace**.
+
+### **Usage:**
+```bash
+clear
+```
+
+---
+
+## 🖥️ 2. `uname` (System Information)
+### **Description:**
+- The `uname` command displays **system information** such as OS, kernel version, and architecture.
+
+### **Usage:**
+```bash
+uname        # Displays system name
+uname -a     # Shows all system details
+uname -r     # Shows kernel version
+uname -m     # Shows hardware architecture
+```
+
+---
+
+## 🖥️ 3. `man` (Manual Pages)
+### **Description:**
+- The `man` command is used to **view the manual pages** for Linux commands and programs.
+
+### **Usage:**
+```bash
+man command_name    # Display manual for any command
+man -f grep         # Show a short description of the grep command
+man ls              # Show manual for 'ls' command
+```
+
+---
+
+## 🖥️ 4. `whoami` (Current User)
+### **Description:**
+- The `whoami` command displays the **currently logged-in username**.
+- Useful for checking your user identity, especially in **multi-user environments**.
+
+### **Usage:**
+```bash
+whoami
+```
+
+---
+
+## 🖥️ 5. `pwd` (Print Working Directory)
+### **Description:**
+- The `pwd` command shows the **current directory path**.
+- Useful when navigating through the Linux filesystem.
+
+### **Usage:**
+```bash
+pwd
+```
+
+---
+
+## 🖥️ 6. `history` (Command History)
+### **Description:**
+- The `history` command displays a **list of previously executed commands** in the terminal.
+- Helps in recalling past commands and debugging.
+
+### **Usage:**
+```bash
+history         # Display all history
+history -c      # Clear entire command history
+history N       # Show last N commands
+history | grep <command>  # Search history for a specific command
+!!              # Re-run the last executed command
+!<line_number>  # Run a specific command from history by line number
+!<string>       # Run the most recent command that starts with <string>
+history -d 500  # Delete the command at history line number 500
+```
+
+---
+
+## 🖥️ 7. `sudo su -` (Switch to Root User)
+### **Description:**
+- The `sudo su -` command allows you to **switch to the root user** for administrative tasks.
+
+### **Usage:**
+```bash
+sudo su -    # Switch to root user
+exit         # Return to normal user (e.g., ec2-user)
+```
+
+---
+
+## 🖥️ 8. `who` (Check Logged-in Users)
+### **Description:**
+- Displays users currently logged into the system along with login details.
+
+### **Usage:**
+```bash
+who
+```
+
+---
+
+## 🖥️ 9. `mkdir` (Create Directory)
+### **Description:**
+- The `mkdir` command is used to **create new directories**.
+
+### **Usage:**
+```bash
+mkdir four              # Create a directory named 'four'
+mkdir -v five           # Create 'five' with verbose output
+mkdir one two three     # Create multiple directories
+mkdir one/two/three     # Error: 'two' does not exist
+mkdir -p one/two/three # Create parent directories automatically
+mkdir "kk funda"        # Create a directory with spaces in name
+mkdir -m 755 public     # Create 'public' with specific permissions
+```
+
+---
+
+## 🖥️ 10. `cd` (Change Directory)
+### **Description:**
+- The `cd` command is used to **navigate between directories**.
+
+### **Usage:**
+```bash
+cd Documents          # Move to 'Documents' directory
+cd /                 # Move to root directory
+cd one/two/three     # Navigate through nested directories
+cd ../home           # Move one level up and go to 'home'
+cd ../..            # Move two levels up
+cd or cd ~          # Move to the home directory
+cd -                # Switch between current and previous directories
+```
+
+---
+
+## 🖥️ 11. `rmdir` (Remove Empty Directory)
+### **Description:**
+- Removes an **empty** directory.
+
+### **Usage:**
+```bash
+rmdir test  # Deletes an empty directory named 'test'
+```
+
+---
+
+## 🖥️ 12. `rm` (Remove Files & Directories)
+### **Description:**
+- The `rm` command removes files and directories, whether empty or not.
+
+### **Usage:**
+```bash
+rm file_name          # Delete a file
+rm -rf directory_name # Delete a directory and its contents forcefully
+```
+
+---
+
+## 🖥️ 13. `touch` (Create Empty Files)
+### **Description:**
+- The `touch` command creates **empty files** or updates timestamps of existing files.
+
+### **Usage:**
+```bash
+touch demo.txt       # Create an empty file named 'demo.txt'
+touch one two three  # Create multiple empty files
+```
+
+---
+
+## 🔹 Summary of Important Commands
+
+| **Command**  | **Description** |
+|-------------|----------------|
+| `clear` | Clears the terminal screen. |
+| `uname` | Displays system information. |
+| `man` | Opens the manual page for commands. |
+| `whoami` | Shows the currently logged-in user. |
+| `pwd` | Displays the present working directory. |
+| `history` | Shows a list of previously entered commands. |
+| `sudo su -` | Switches to root user. |
+| `mkdir` | Creates directories. |
+| `cd` | Changes directories. |
+| `rm` | Deletes files and directories. |
+| `touch` | Creates empty files. |
+
+
+
