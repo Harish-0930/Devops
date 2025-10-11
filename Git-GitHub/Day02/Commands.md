@@ -117,3 +117,5 @@ git push --force
 
 > ⚠️ Use `--force` carefully. Never do this on shared branches unless you know what you're doing.
 
+📘 **Author:** Munagala Harish 
+
