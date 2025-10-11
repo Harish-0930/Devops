@@ -135,14 +135,14 @@ syntax:
 crontab -l  : How many jobs are currently configure.
 crontab -e  —>edit the crontab
 crontab -r  —> remove the crontab
-#crontab -l -u kkfunda  → to see other users crontab, only root user can run this.
+#crontab -l -u hari  → to see other users crontab, only root user can run this.
 
 $sudo touch /etc/cron.allow  —> remove cron access to normal user.
 #sudo vi /etc/cron.allow  —> add user here.
 
 vi hello.sh
 
-echo “welcome to KK FUNDA”
+echo “welcome to Devops world”
 echo “today date is:”
 date
 uptime
