@@ -202,5 +202,3 @@ End of Document
 
 📘 **Author:** Munagala Harish  
 📅 **Title:** *Maven Reference Guide*  
-✅ **End of Document**
-This Markdown document is ready for GitHub upload.
