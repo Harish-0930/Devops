@@ -246,5 +246,6 @@ A **set of conditions** (default: *Sonar Way*).
 ---
 
 💡 **End of Document**
+---
 📘 **Author:** Munagala Harish  
 📅 **Title:** *SonarQube Overview*  
