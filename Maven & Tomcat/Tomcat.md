@@ -212,8 +212,8 @@ vi context.xml
 cd /opt/apache-tomcat-9.0.109/conf/
 vi tomcat-users.xml
 
-<user username="admin" password="admin123" roles="manager-gui,admin-gui"/>
-<user username="mahesh" password="mahesh123" roles="manager-gui,admin-gui"/>
+<user username="admin" password="*******" roles="manager-gui,admin-gui"/>
+<user username="mahesh" password="*******" roles="manager-gui,admin-gui"/>
 ```
 
 ### Step 3: Modify Host Manager (if required)
