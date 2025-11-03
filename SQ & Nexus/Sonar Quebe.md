@@ -122,7 +122,7 @@ sh sonar.sh start
 sh sonar.sh status
 ```
 
-Access:(http://<IP>:9000/)
+Access:(http://IPaddress:9000/)
 
 ---
 
@@ -135,7 +135,7 @@ Connect to the Maven server with your Java project.
 Update `pom.xml`:
 ```xml
 <properties>
-    <sonar.host.url>http://<IP>:9000</sonar.host.url>
+    <sonar.host.url>http://IPaddress:9000</sonar.host.url>
     <sonar.login>admin</sonar.login>
     <sonar.password>admin</sonar.password>
 </properties>
@@ -164,7 +164,7 @@ Administration → Security → Users → Tokens → Generate Token
 Update `pom.xml`:
 ```xml
 <properties>
-   <sonar.host.url>http://<IP>:9000</sonar.host.url>
+   <sonar.host.url>http://IPaddress:9000</sonar.host.url>
    <sonar.login>squ_f16a79749bad93fb485aa8e2c3b323ef7f2c8b6d</sonar.login>
 </properties>
 ```
@@ -246,3 +246,5 @@ A **set of conditions** (default: *Sonar Way*).
 ---
 
 💡 **End of Document**
+📘 **Author:** Munagala Harish  
+📅 **Title:** *SonarQube Overview*  
