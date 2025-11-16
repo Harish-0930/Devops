@@ -1,0 +1,37 @@
+.create-employee {
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.create-employee form {
+  display: flex;
+  flex-direction: column;
+}
+
+.create-employee label {
+  margin-bottom: 10px;
+}
+
+.create-employee input[type="text"],
+.create-employee input[type="email"],
+.create-employee input[type="file"],
+.create-employee select {
+  padding: 8px;
+  margin-top: 5px;
+  width: 100%;
+}
+
+.create-employee button {
+  padding: 10px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+.create-employee button:hover {
+  background-color: #45a049;
+}

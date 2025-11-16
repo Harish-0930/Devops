@@ -1,0 +1,71 @@
+
+
+.edit-employee {
+  padding: 20px;
+  margin: 20px auto;
+  max-width: 600px;
+  background-color: #f4f4f4;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.edit-employee h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.edit-employee form {
+  display: flex;
+  flex-direction: column;
+}
+
+.edit-employee label {
+  margin-bottom: 15px;
+}
+
+.edit-employee label input[type="text"],
+.edit-employee label input[type="email"],
+.edit-employee label select,
+.edit-employee label input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.edit-employee label input[type="file"] {
+  padding: 0;
+}
+
+.edit-employee label input[type="radio"],
+.edit-employee label input[type="checkbox"] {
+  margin-right: 5px;
+}
+
+.edit-employee .gender-options,
+.edit-employee .course-options {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.edit-employee .gender-options label,
+.edit-employee .course-options label {
+  margin-right: 15px;
+}
+
+.edit-employee button[type="submit"] {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.edit-employee button[type="submit"]:hover {
+  background-color: #0056b3;
+}
