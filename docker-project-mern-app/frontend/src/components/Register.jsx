@@ -24,7 +24,7 @@ const Register = () => {
     try {
       const response = await axios.post("http://localhost:5000/register", formData);
       alert("Registration successful! You can now login.");
-      navigate("/"); // redirect to login page
+      navigate("/login"); // redirect to login page
     } catch (err) {
       if (err.response && err.response.status === 400) {
         alert("User already exists");
