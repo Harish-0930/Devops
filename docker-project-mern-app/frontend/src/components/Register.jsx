@@ -63,11 +63,11 @@ const Register = () => {
           </div>
 
           <button type="submit">Register</button>
+          
+          <p>
+            Already have an account? <a href="/login">Login</a>
+          </p>
         </form>
-
-        <p>
-          Already have an account? <a href="/login">Login</a>
-        </p>
       </div>
     </div>
   );
