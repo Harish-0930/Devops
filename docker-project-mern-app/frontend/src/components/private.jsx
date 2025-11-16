@@ -9,7 +9,7 @@ export default function Private(props){
         ?
         <props.Component/>
         :
-        <Navigate to="/register"/>
+        <Navigate to="/"/>
     )
 
 }
