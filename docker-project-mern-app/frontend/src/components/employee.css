@@ -1,0 +1,150 @@
+/* EmployeeTable.css */
+
+/* Overall table container styling */
+.employee-table {
+  padding: 20px;
+  margin: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Table header styling */
+.employee-table h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Table styling */
+.employee-table table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+/* Table header styling */
+.employee-table th {
+  background-color: #007bff;
+  color: #fff;
+  padding: 12px;
+  text-align: left;
+  border-bottom: 2px solid #ddd;
+}
+
+/* Table cell styling */
+.employee-table td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Alternating row colors for better readability */
+.employee-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+/* Styling buttons within table */
+.employee-table button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  margin: 2px;
+}
+
+/* Edit button styling */
+.employee-table button:hover {
+  opacity: 0.8;
+}
+
+/* Edit button color */
+.employee-table button:first-child {
+  background-color: #007bff;
+}
+
+/* Delete button color */
+.employee-table button:last-child {
+  background-color: #dc3545;
+}
+
+/* Add responsiveness for smaller screens */
+@media (max-width: 768px) {
+  .employee-table table, .employee-table th, .employee-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .employee-table th {
+    text-align: right;
+  }
+
+  .employee-table td {
+    text-align: right;
+    padding-left: 50%;
+    position: relative;
+  }
+
+  .employee-table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 0;
+    width: 45%;
+    padding-left: 10px;
+    font-weight: bold;
+    white-space: nowrap;
+  }
+}
+
+.employee-table {
+  padding: 20px;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.search-create {
+  display: flex;
+  gap: 10px;
+  justify-content:flex-end
+}
+
+.search-input {
+  padding: 5px;
+  width: 250px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+
+}
+
+.create-button {
+  padding: 6px 12px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.create-button:hover {
+  background-color: #45a049;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+table, th, td {
+  border: 1px solid #ccc;
+}
+
+th, td {
+  padding: 10px;
+  text-align: left;
+}
