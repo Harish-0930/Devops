@@ -22,7 +22,7 @@ function App() {
       <div className="App">
         <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/" element={<Register />} />
           <Route path="/dashboard" element={<Private Component={ Dashboard} />} />
           <Route path="/employees" element={<Private Component={EmployeeTable} />} />
           <Route path="/edit-employee/:id" element={<Private Component= {EditEmployee} />} />
