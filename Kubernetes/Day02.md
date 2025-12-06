@@ -8,14 +8,13 @@ Best suited for **learning, development, and testing**.
 
 **Examples:**
 - minikube
-- kubeadm
 - k3s (local setups)
 
 > 💡 *Think of it like practicing flying a plane in a simulator — small, safe, and simple.*
 
 ---
 
-### **2️⃣ Multi-Node Cluster (Kubedium / Self-Managed Cluster)**
+### **2️⃣ Multi-Node Cluster (kubeadm / Self-Managed Cluster)**
 Consists of **one Control Plane node** and **multiple Worker Nodes**.
 
 ✔ Used in production  
@@ -55,8 +54,8 @@ In self-managed clusters:
 
 | Cluster Type | Control Plane Managed By | Example Tools | Use Case |
 |--------------|---------------------------|--------------|----------|
-| Single Node | You | Minikube, Kindkubeadm | Learning, Dev |
-| Multi Node | You | Kubespray, Kubedium | Production |
+| Single Node | You | Minikube | Learning, Dev |
+| Multi Node | You | Kubespray, kubeadm | Production |
 | Managed K8s | Cloud Provider | EKS, GKE, AKS | Enterprise workloads |
 
 ---
