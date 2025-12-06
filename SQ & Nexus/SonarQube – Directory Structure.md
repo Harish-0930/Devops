@@ -51,4 +51,4 @@ End of Document
 ---
 
 📘 **Author:** Munagala Harish  
-📅 **Title:** *Directory Structure & Build Lifecycle*  
+📅 **Title:** *SonarQube – Directory Structure*  
