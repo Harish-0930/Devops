@@ -165,5 +165,3 @@ kubectl api-resources --namespaced=false
 
 ---
 
-This file contains **Pod-only commands + Kubernetes context commands**, filtered cleanly for GitHub documentation.
-
