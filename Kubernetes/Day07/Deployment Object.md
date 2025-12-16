@@ -3,6 +3,7 @@
 ## 📌 What is a Deployment?
 
 In Kubernetes, a **Deployment** is a higher-level object that manages ReplicaSets and ensures that a specified number of pods are running at all times. It provides features like rolling updates, rollbacks, and scaling.
+![Deploment Object](https://kubernetes.io/docs/tutorials/kubernetes-basics/public/images/module_04_labels.svg)
 
 ---
 
