@@ -93,6 +93,9 @@ This prevents Kubernetes from **restarting apps too early**.
 3. Normal traffic flow begins
 
 ---
+## Flow of All three Probes
+![image](https://miro.medium.com/v2/resize:fit:1040/1*vpp8lHuCokbmtyfES_CFiA.png)
+---
 
 ## Example: Deployment with Liveness & Readiness Probes
 
