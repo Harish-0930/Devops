@@ -33,7 +33,7 @@ Each probe can check health using **three methods**:
 2. **TCP Socket**
 3. **Exec Command**
 
-![image](https://cdn.hashnode.com/res/hashnode/image/upload/v1735047865090/6d8b6206-bda8-4e0c-9161-7e19a04516f0.png)
+![image](https://miro.medium.com/v2/resize:fit:1400/1*URtaORtrA_WhvA8VXbYExw.jpeg)
 ---
 
 ## 1️⃣ Liveness Probe
