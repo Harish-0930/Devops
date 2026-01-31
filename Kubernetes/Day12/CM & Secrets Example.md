@@ -296,7 +296,7 @@ metadata:
   name: springapp-svc
   namespace: prod
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: springapp
   ports:
