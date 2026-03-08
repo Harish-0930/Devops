@@ -262,7 +262,7 @@ metadata:
   namespace: default
 subjects:
 - kind: User
-  name: kkfunda1
+  name: hari
   apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: Role
@@ -304,7 +304,7 @@ metadata:
   name: fullaccess
 subjects:
 - kind: User
-  name: kkfunda
+  name: hari
   apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: ClusterRole
