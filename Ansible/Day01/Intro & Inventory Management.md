@@ -1,4 +1,4 @@
-  # Ansible – Complete Notes
+  # Introduction to Ansible
 
 ## 📌 What is Ansible?
 Ansible is an open-source automation tool used for:
