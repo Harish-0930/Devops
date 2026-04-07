@@ -1,4 +1,4 @@
-# Day 2: Introduction to Linux  
+# Introduction to Linux  
 
 ## 1. What is Linux?  
 Linux is an **open-source operating system** based on Unix, widely used for servers, cloud computing, and embedded systems.
