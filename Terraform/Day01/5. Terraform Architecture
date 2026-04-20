@@ -1,0 +1,60 @@
+# Terraform Architecture – Structure and Workflow
+
+Terraform is an open-source Infrastructure as Code (IaC) tool developed by HashiCorp. It enables users to define and provision infrastructure across various cloud providers and on-premises environments using a declarative configuration language.
+
+---
+
+### 🖼️ Terraform Architecture Diagram
+![Terraform Architecture](https://miro.medium.com/0*bJzMGdZBo0zKfbvQ)
+
+## 🧱 Core Components of Terraform Architecture
+
+### 1. Terraform Core
+- **Function**: Acts as the primary engine of Terraform.
+- **Responsibilities**:
+  - Parses and validates configuration files.
+  - Manages the state of infrastructure.
+  - Determines the execution plan.
+  - Applies changes to reach the desired state.
+- **Implementation**: Written in Go and available as a statically compiled binary.
+
+### 2. Providers
+- **Function**: Serve as plugins that enable Terraform to interact with various APIs.
+- **Responsibilities**:
+  - Define resources and data sources for a specific platform (e.g., AWS, Azure, GCP).
+  - Translate Terraform configurations into API calls.
+- **Availability**: Maintained by HashiCorp, third-party vendors, or the community.
+
+### 3. State File (`terraform.tfstate`)
+- **Function**: Maintains a mapping between the resources defined in configuration files and the real-world infrastructure.
+- **Importance**:
+  - Tracks metadata and resource dependencies.
+  - Essential for determining changes during the planning and applying phases.
+- **Storage Options**: Can be stored locally or remotely (e.g., in S3, Terraform Cloud).
+
+---
+
+## 🔄 Terraform Workflow
+
+1. **Write**: Define infrastructure in `.tf` files using HashiCorp Configuration Language (HCL).
+2. **Initialize**: Run `terraform init` to initialize the working directory and download necessary providers.
+3. **Plan**: Execute `terraform plan` to preview the changes Terraform will make to match the desired state.
+4. **Apply**: Use `terraform apply` to enact the planned changes and provision resources.
+5. **Destroy**: When needed, `terraform destroy` can be used to remove all managed infrastructure.
+
+---
+
+## 🌐 Cloud-Agnostic Capabilities
+
+Terraform's architecture allows it to be cloud-agnostic, supporting multiple providers simultaneously. This enables users to manage a diverse set of resources across different platforms using a unified workflow.
+
+---
+
+## 📌 Summary
+
+- **Terraform Core**: The engine that processes configurations and manages state.
+- **Providers**: Plugins that allow Terraform to interact with various services.
+- **State File**: Tracks the current state of infrastructure to manage changes effectively.
+- **Workflow**: A consistent process involving writing configurations, initializing, planning, applying, and destroying resources.
+
+By understanding these components and workflows, users can leverage Terraform to manage infrastructure efficiently and reliably across multiple environments.
