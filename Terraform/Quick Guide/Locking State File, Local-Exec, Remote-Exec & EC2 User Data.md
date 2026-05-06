@@ -136,7 +136,7 @@ resource "aws_instance" "web" {
   connection {
     type        = "ssh"
     user        = "ec2-user"
-    private_key = file("/Users/avizway/Desktop/keypairs/awar06-lnx.pem")
+    private_key = file("/Users/hari/Desktop/keypairs/awar06-lnx.pem")
     host        = self.public_ip
     agent       = false
   }
