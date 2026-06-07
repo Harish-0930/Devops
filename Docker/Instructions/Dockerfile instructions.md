@@ -2,7 +2,9 @@
 
 A concise revision guide covering common Dockerfile instructions, their use cases, and the differences between commonly confused ones.
 
-[https://github.com/Harish-0930/Devops/blob/main/Docker/Instructions/docker%20insts.png](DockerFileInstructions)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Harish-0930/Devops/main/Docker/Instructions/docker%20insts.png" alt="Docker File Instructions" width="800">
+</p>
 
 ---
 
@@ -217,19 +219,30 @@ You still need `-p` (or `-P`) to make the port reachable from outside.
 
 ---
 
-## 3. Mini Best-Practice Checklist (Interview Bonus)
+## 3. Best-Practice Checklist
 
 - **Order matters for caching:** put rarely-changing instructions (e.g. `COPY package.json` + `RUN npm install`) **before** frequently-changing ones (`COPY . .`).
 - **Use multi-stage builds** to keep final images small:
   ```dockerfile
-  FROM golang:1.22 AS build
-  WORKDIR /src
-  COPY . .
-  RUN go build -o /app
+    # Stage 1: Build the application
+    FROM maven:3.9.9-eclipse-temurin-21 AS build
 
-  FROM gcr.io/distroless/base
-  COPY --from=build /app /app
-  ENTRYPOINT ["/app"]
+    WORKDIR /src
+
+    COPY pom.xml .
+    COPY src ./src
+
+    RUN mvn clean package -DskipTests
+
+    # Stage 2: Create lightweight runtime image
+    FROM eclipse-temurin:21-jre
+
+    WORKDIR /app
+
+    COPY --from=build /src/target/*.jar app.jar
+
+    ENTRYPOINT ["java", "-jar", "app.jar"]
+
   ```
 - **Add a `.dockerignore`** to exclude `node_modules`, `.git`, secrets, etc. from the build context.
 - **Pin versions** in `FROM` (e.g. `node:20.11-alpine`, not `node:latest`) for reproducibility.
@@ -259,3 +272,7 @@ HEALTHCHECK --interval=30s CMD wget -qO- http://localhost:3000/health || exit 1
 ENTRYPOINT ["node"]
 CMD ["server.js"]
 ```
+
+Author: Munagala Harish
+
+Topic: Docker File Instructions
