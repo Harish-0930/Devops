@@ -1,27 +1,40 @@
-# MERN App Dockerized Project
+# 🚀 MERN Stack Application with Docker & Docker Compose
 
-This repository contains a complete **MERN stack application** fully containerized using **Docker** and **Docker Compose**.
+This project is a complete **MERN application** (MongoDB, Express.js, React.js, Node.js) fully containerized using **Docker** and **Docker Compose**.
+
+The application includes:
+
+* ✔ Node.js + Express backend (API + JWT Auth)
+* ✔ React frontend (served via Nginx)
+* ✔ MongoDB as database
+* ✔ Custom Docker network
+* ✔ Auto-restart policies
+* ✔ Named volumes for MongoDB persistence
 
 ---
 
-## 🚀 Project Structure
+## 📁 **Project Structure**
 
 ```
 docker-project-mern-app/
-├── docker-compose.yml
-├── frontend/
+│── docker-compose.yml
+│── frontend/
 │   ├── Dockerfile
-│   └── (React app)
+│   ├── src/
+│   └── public/
+│
 └── node/
     ├── Dockerfile
-    └── (Node.js + Express API)
+    ├── app.js
+    ├── config/
+    ├── models/
+    ├── uploads/
+    └── package.json
 ```
-
----
 
 ## 🐳 Docker Compose Overview
 
-Your `docker-compose.yml` sets up the following services:
+`docker-compose.yml` sets up the following services:
 
 ### **1️⃣ MongoDB Container**
 - Uses image `mongo:8.0.9-noble`
@@ -39,89 +52,37 @@ Your `docker-compose.yml` sets up the following services:
 - Serves static files using Nginx
 - Runs inside same Docker network
 
----
 
-## 🔂 Docker Networks Explained
+### **Services included**
 
-Docker Compose automatically creates a custom network named:
-
-```
-mernapp-net
-```
-
-This allows containers to communicate using **service names**:
-
-| Container       | Hostname inside network |
-|----------------|--------------------------|
-| mongo-container | `mongo-container`       |
-| node-container  | `node-container`        |
-| react-container | `react-container`       |
-
-Example connection string:
-
-```
-mongodb://mongo-container:27017/mernapp
-```
-
-No IP addresses are needed.
+| Service  | Description                | Port  |
+| -------- | -------------------------- | ----- |
+| mongo    | MongoDB database           | 27017 |
+| backend  | Node.js + Express API      | 5000  |
+| frontend | React app served via Nginx | 3000  |
 
 ---
 
-## 📦 Docker Volumes Explained
 
-A named Docker volume is used:
+# 🐳 Docker Setup
 
-```
-mongo_data
-```
-
-It stores your MongoDB database files **persistently** even if a container is removed:
-
-```
-volumes:
-  mongo_data:
-```
-
-View all volumes:
-
-```
-docker volume ls
-```
-
-Inspect volume:
-
-```
-docker volume inspect mongo_data
-```
-
----
-
-## ▶️ Run the Application
-
-Start all services in detached mode:
-
-```
-docker compose up -d
-```
-
-Rebuild containers:
+## 1️⃣ **Build and run all containers (detached mode)**
 
 ```
 docker compose up --build -d
 ```
 
-Stop all containers:
+## 2️⃣ **Stop all containers**
 
 ```
 docker compose down
 ```
 
-Stop and clear volumes:
+## 3️⃣ **Stop and delete volumes (DB data also cleared)**
 
 ```
 docker compose down -v
 ```
-
 ---
 
 ## 🧪 Access the Application
@@ -134,23 +95,82 @@ docker compose down -v
 
 ---
 
-## 🛠 Entering Containers
+# ⚙️ Backend Environment Variable
 
-### Enter React container:
+The backend connects to MongoDB using:
+
 ```
-docker exec -it react-container bash
+MONGO_URL=mongodb://mongo-container:27017/mernapp
 ```
 
-### Enter Node container:
+This is automatically passed from `docker-compose.yml`.
+
+---
+
+# 📦 Useful Docker Commands
+
+### 👉 Enter Mongo container shell
+
+```
+docker exec -it mongo-container bash
+```
+
+### 👉 Enter Node container shell
+
 ```
 docker exec -it node-container bash
 ```
 
-### Enter MongoDB shell:
+### 👉 Enter React container
+
 ```
-docker exec -it mongo-container mongosh
+docker exec -it react-container bash
 ```
 
+---
+
+# 🗄️ Working With MongoDB
+
+### Enter Mongo container shell
+
+```
+docker exec -it mongo-container bash
+```
+
+### Show databases:
+
+```
+mongosh --host localhost
+show dbs
+```
+
+### Use your DB:
+
+```
+use mernapp
+```
+
+### Show collections:
+
+```
+show collections
+```
+
+### To delete all data (Dangerous ⚠️)
+
+```
+db.dropDatabase()
+```
+## 🗑 View Data In Database 
+
+Inside Mongo shell:
+
+```
+use mernapp
+show collections
+db.users.find().pretty()
+db.employees.find().pretty()
+```
 ---
 
 ## 🔍 Inspect Docker Network
@@ -215,39 +235,77 @@ docker volume rm docker-project-mern-app_mongo_data
 
 ---
 
-## 🗑 View Data In Database 
-
-Inside Mongo shell:
-
-```
-use mernapp
-show collections
-db.users.find().pretty()
-db.employees.find().pretty()
-```
 
 ---
 
-## 📁 Why Nginx + nginx.conf in Frontend?
+# 🔧 Why Nginx is used for frontend?
 
-The line in the Dockerfile:
+React builds production files inside:
+
+```
+/app/dist  (or /app/build)
+```
+
+These cannot run directly — so Nginx serves them as static files.
+Hence, this line is required in Dockerfile:
 
 ```
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 ```
 
-Allows:
+It ensures:
 
-- Custom routing rules  
-- Single Page App fallback to `index.html`  
-- Handling React Router paths  
-- Compression / caching optimization  
-
-Without it, you may get **"404 Not Found"** on page reloads.
+* Proper routing (`/`, `/login`, `/register`, `/dashboard`)
+* Avoids 404 Not Found error
+* Handles React BrowserRouter paths correctly
 
 ---
 
+# 📝 Nginx Config Example (if required)
 
-## Author
+```
+server {
+    listen 80;
+    server_name localhost;
 
-Munagala Harish — MERN + Docker Project
+    root /usr/share/nginx/html;
+
+    location / {
+        try_files $uri /index.html;
+    }
+}
+```
+
+---
+
+# 📌 How to Check Logs
+
+### Backend logs:
+
+```
+docker logs node-container
+```
+
+### MongoDB logs:
+
+```
+docker logs mongo-container
+```
+
+### Frontend logs:
+
+```
+docker logs react-container
+```
+
+---
+
+# 🎯 Deployment Ready
+
+This project is fully dockerized and can be deployed on:
+
+* AWS EC2
+* Azure VM
+* Google Cloud VM
+* DigitalOcean
+* Any Docker-compatible server
