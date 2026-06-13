@@ -1,4 +1,4 @@
-# Day 3 — Jenkins Project 1: Build, Push & Run a Flask App with Jenkins (DooD)
+# Jenkins Project 1: Build, Push & Run a Flask App with Jenkins (DooD)
 
 ---
 
