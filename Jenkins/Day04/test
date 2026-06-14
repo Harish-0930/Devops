@@ -1,0 +1,36 @@
+# ── 1) Login to Docker Hub 
+echo "Logging in to Docker Hub..."
+echo "$DOCKERHUB_PWD" | docker login -u "$DOCKERHUB_USER" --password-stdin
+
+# ── 2) Set image name and tag 
+IMAGE="youruser/flask-app"
+TAG="${BUILD_NUMBER}"
+
+# ── 3) Build the Docker image 
+echo "Building image $IMAGE:$TAG ..."
+docker build -t "$IMAGE:$TAG" -t "$IMAGE:latest" .
+
+# ── 4) Push to Docker Hub 
+echo "Pushing image..."
+docker push "$IMAGE:$TAG"
+docker push "$IMAGE:latest"
+
+# ── 5) Deploy on the Docker host (DooD) 
+echo "Deploying container..."
+docker pull "$IMAGE:$TAG"
+docker rm -f flask-app || true
+docker run -d --name flask-app -p 5000:5000 "$IMAGE:$TAG"
+
+# ── 6) Smoke test — retrieve the public IP from EC2 metadata 
+sleep 2
+
+TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" \
+  -H "X-aws-ec2-metadata-token-ttl-seconds: 21600" -s)
+
+PUBLIC_IP=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" \
+  -s http://169.254.169.254/latest/meta-data/public-ipv4)
+
+echo "========================================="
+echo "Deployment Successful!"
+echo "Application URL: http://$PUBLIC_IP:5000"
+echo "========================================="
