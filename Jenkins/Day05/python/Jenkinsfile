@@ -1,0 +1,83 @@
+pipeline {
+    agent any 
+    environment {
+        IMAGE = "harish0930/flask-app"
+        TAG = "pipeline-${BUILD_NUMBER}"
+    }
+    stages {
+        stage ('Build') {
+            steps {
+                echo 'Building the image'
+                sh 'docker build -t "$IMAGE:$TAG" -t "$IMAGE:latest" .'
+            }
+        }
+        stage ('Push') {
+            steps {
+                echo 'Pushing the image to Docker Hub'
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'DOCKERHUB_PASSWORD', usernameVariable: 'DOCKERHUB_USERNAME')]) {
+                    sh 'echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin'
+                    sh 'docker push "$IMAGE:$TAG"'
+                    sh 'docker push "$IMAGE:latest"'
+                }
+            }
+        }
+        stage ('Deploy') {
+            steps {
+                echo 'Deploying the application'
+                sh 'docker pull "$IMAGE:$TAG"'
+                sh 'docker rm -f flask-app || true'
+                sh 'docker run -d --name flask-app -p 5000:5000 "$IMAGE:$TAG"'
+                sh '''
+                    cat > deploy-info-$BUILD_NUMBER.txt <<EOF
+                    build: $BUILD_NUMBER
+                    image: $IMAGE:$TAG
+                    commit: ${GIT_COMMIT}
+                    branch: $GIT_BRANCH
+                    time: $(date -u +"%Y-%m-%dT%H:%M:%SZ")
+                    url: $BUILD_URL
+                    EOF
+                '''
+
+                // archive and fingerprint it
+                archiveArtifacts artifacts: "deploy-info-${BUILD_NUMBER}.txt", fingerprint: true
+            }
+        }
+        stage ('Test') {
+            steps {
+            echo 'Testing the application'
+
+            script {
+            sleep 2
+
+            def token = sh(
+                script: '''
+                    curl -X PUT "http://169.254.169.254/latest/api/token" \
+                    -H "X-aws-ec2-metadata-token-ttl-seconds: 21600" -s
+                ''',
+                returnStdout: true
+            ).trim()
+
+            def publicIp = sh(
+                script: """
+                    curl -H "X-aws-ec2-metadata-token: ${token}" \
+                    -s http://169.254.169.254/latest/meta-data/public-ipv4
+                """,
+                returnStdout: true
+            ).trim()
+
+            echo "========================================="
+            echo "Deployment Successful!"
+            echo "Application URL: http://${publicIp}:5000"
+            echo "========================================="
+                }
+            }
+        }
+    }
+
+    post 
+    {
+        success { echo "Build ${env.BUILD_NUMBER} succeeded" }
+        failure { echo "Build ${env.BUILD_NUMBER} failed" }
+        always  { echo "Build ${env.BUILD_NUMBER} finished" }
+    }
+}
