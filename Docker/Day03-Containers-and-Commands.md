@@ -1,7 +1,4 @@
 # Day 03 — Docker Containers & Container Commands
-
-> Today: the container lifecycle and every container command you'll actually use day to day.
-
 ---
 
 ## 1. What is a Container?
