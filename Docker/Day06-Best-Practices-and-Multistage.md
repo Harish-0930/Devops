@@ -1,7 +1,4 @@
 # Day 06 — Best Practices & Multi-Stage Builds
-
-> Today: the habits that keep images small, fast, and secure — plus multi-stage builds, the single biggest win for image size.
-
 ---
 
 ## 1. Docker Best Practices
