@@ -74,6 +74,7 @@ docker run -d -p 8080:80 nginx
 
 ```bash
 docker network create mynet                 # create
+- Docker creates a user-defined `bridge` network, not the default bridge network.
 docker network ls                           # list
 docker network inspect mynet                # details (subnet, connected containers)
 docker network connect mynet web            # attach a running container
