@@ -6,6 +6,8 @@
 2. Application Manifest files
 3. Ingress Resource file
 4. Verification
+5. Cleanup
+6. Usefull commands
 
 ## 1. **Installing NGINX Ingress Controller**
 ## Step 1: Add the Helm Repository
@@ -312,19 +314,19 @@ techgosoft-ingress   nginx   *       a1b2c3d....
 kubectl get pods
 ```
 
-## Verify Services
+#### Verify Services
 
 ```bash
 kubectl get svc
 ```
 
-## Verify Ingress
+#### Verify Ingress
 
 ```bash
 kubectl get ingress
 ```
 
-## Verify Controller
+#### Verify Controller
 
 ```bash
 kubectl get pods -n ingress-nginx
@@ -333,13 +335,13 @@ kubectl get pods -n ingress-nginx
 ---
 ## Access the Website
 
-## Local
+#### Local
 
 ```
 http://localhost:9090
 ```
 
-## Public
+#### Public
 
 ```
 http://<AWS-ELB-DNS>
@@ -350,192 +352,138 @@ Example:
 ```
 http://k8s-ingressn-ingressn-xxxxxxxx.elb.us-east-2.amazonaws.com
 ```
+## 5. CleanUp:
+Since these resources were installed by **Helm**, the cleanest way is to uninstall the Helm release instead of force deleting individual resources.
 
-### Useful Commands
-## List Ingress Controller Service
-
-```bash
-kubectl get svc -n ingress-nginx
-```
-
-## Describe Ingress Controller Service
+### Option 1 (Recommended)
 
 ```bash
-kubectl describe svc ingress-nginx-controller -n ingress-nginx
+helm uninstall ingress-nginx -n ingress-nginx
 ```
 
----
-
-## Deployment Commands
-
-## List Deployments
-
-```bash
-kubectl get deployments
-```
-
-## Describe Deployment
-
-```bash
-kubectl describe deployment <deploy-name>
-```
-
----
-
-## Ingress Commands
-
-## List Ingress
-
-```bash
-kubectl get ingress
-```
-
-## Describe Ingress
-
-```bash
-kubectl describe ingress techgosoft-ingress
-```
----
-
-## Port Forwarding
-
-## Forward Service
-
-```bash
-kubectl port-forward svc/techgosoft-service 9090:80
-```
-
-Access:
-
-```
-http://localhost:9090
-```
-
----
-
-## Endpoint Commands
-
-## List Endpoints
-
-```bash
-kubectl get endpoints
-```
-
-## Ingress Controller Endpoints
-
-```bash
-kubectl get endpoints ingress-nginx-controller -n ingress-nginx
-```
-
----
-
-## Helm Repository
-
-## Add Repository
-
-```bash
-helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-```
-
-## Update Repository
-
-```bash
-helm repo update
-```
-
-
----
-
-## Helm Status
-
-## List Releases
-
-```bash
-helm list -A
-```
-
-## Namespace Releases
-
-```bash
-helm list -n ingress-nginx
-```
-
-## Release Status
-
-```bash
-helm status ingress-nginx -n ingress-nginx
-```
-
-## View Rendered Manifests
-
-```bash
-helm get manifest ingress-nginx -n ingress-nginx
-```
-
-## Show Default Values
-
-```bash
-helm show values ingress-nginx/ingress-nginx
-```
-## Delete Service
-
-```bash
-kubectl delete svc ingress-nginx-controller -n ingress-nginx
-```
-
----
-
-## Check All Resources
-
-## Current Namespace
-
-```bash
-kubectl get all
-```
-
-## Ingress Namespace
+Verify:
 
 ```bash
 kubectl get all -n ingress-nginx
 ```
 
----
-
-## Check NGINX Controller Logs
+If the namespace is now empty, you can delete it:
 
 ```bash
-kubectl logs -n ingress-nginx deployment/ingress-nginx-controller
-```
-
-Last 100 lines:
-
-```bash
-kubectl logs -n ingress-nginx deployment/ingress-nginx-controller --tail=100
+kubectl delete namespace ingress-nginx
 ```
 
 ---
-## Verification Commands
 
-## Verify Pods
+## Option 2: Force delete everything
 
-```bash
-kubectl get pods
-```
-
-## Verify Services
+If you want to remove everything regardless of Helm:
 
 ```bash
-kubectl get svc
+kubectl delete all --all -n ingress-nginx --force --grace-period=0
 ```
 
-## Verify Ingress
+Delete the remaining resources:
 
 ```bash
-kubectl get ingress
+kubectl delete ingress --all -n ingress-nginx --force --grace-period=0
+
+kubectl delete configmap --all -n ingress-nginx
+
+kubectl delete secret --all -n ingress-nginx
+
+kubectl delete serviceaccount --all -n ingress-nginx
+
+kubectl delete role --all -n ingress-nginx
+
+kubectl delete rolebinding --all -n ingress-nginx
 ```
 
-## Verify Controller
+Finally, delete the namespace:
 
 ```bash
-kubectl get pods -n ingress-nginx
+kubectl delete namespace ingress-nginx --force --grace-period=0
 ```
+
+---
+
+## Option 3 (Fastest)
+
+If this is just a lab and you don't need anything in the namespace:
+
+```bash
+kubectl delete namespace ingress-nginx
+```
+
+Kubernetes will automatically delete:
+
+* Pods
+* Services
+* Deployments
+* ReplicaSets
+* ConfigMaps
+* Secrets
+* ServiceAccounts
+* Roles
+* RoleBindings
+
+Everything inside that namespace.
+
+---
+
+### Before reinstalling
+
+Also remove the Helm release metadata (if it still exists):
+
+```bash
+helm list -A
+```
+
+If you still see `ingress-nginx`:
+
+```bash
+helm uninstall ingress-nginx -n ingress-nginx
+```
+
+---
+
+### Verify cleanup
+
+```bash
+kubectl get ns
+
+kubectl get all -n ingress-nginx
+
+helm list -A
+```
+
+## 6. Usefull Commands
+| **Category**              | **Purpose**                            | **Command**                                                                    |
+| ------------------------- | -------------------------------------- | ------------------------------------------------------------------------------ |
+| **Ingress Controller**    | List Ingress Controller Service        | `kubectl get svc -n ingress-nginx`                                             |
+|                           | Describe Ingress Controller Service    | `kubectl describe svc ingress-nginx-controller -n ingress-nginx`               |
+| **Deployment**            | List Deployments                       | `kubectl get deployments`                                                      |
+|                           | Describe Deployment                    | `kubectl describe deployment <deploy-name>`                                    |
+| **Ingress**               | List Ingress Resources                 | `kubectl get ingress`                                                          |
+|                           | Describe Ingress                       | `kubectl describe ingress techgosoft-ingress`                                  |
+| **Port Forwarding**       | Forward Service Port                   | `kubectl port-forward svc/techgosoft-service 9090:80`                          |
+|                           | Access Application                     | `http://localhost:9090`                                                        |
+| **Endpoints**             | List All Endpoints                     | `kubectl get endpoints`                                                        |
+|                           | View Ingress Controller Endpoints      | `kubectl get endpoints ingress-nginx-controller -n ingress-nginx`              |
+| **Helm Repository**       | Add NGINX Ingress Repository           | `helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx`       |
+|                           | Update Helm Repositories               | `helm repo update`                                                             |
+| **Helm Release**          | List All Releases                      | `helm list -A`                                                                 |
+|                           | List Releases in Namespace             | `helm list -n ingress-nginx`                                                   |
+|                           | Check Release Status                   | `helm status ingress-nginx -n ingress-nginx`                                   |
+|                           | View Rendered Manifests                | `helm get manifest ingress-nginx -n ingress-nginx`                             |
+|                           | Show Default Chart Values              | `helm show values ingress-nginx/ingress-nginx`                                 |
+| **Service Management**    | Delete Ingress Controller Service      | `kubectl delete svc ingress-nginx-controller -n ingress-nginx`                 |
+| **Resource Verification** | List All Resources (Current Namespace) | `kubectl get all`                                                              |
+|                           | List All Resources (Ingress Namespace) | `kubectl get all -n ingress-nginx`                                             |
+| **Logs**                  | View NGINX Controller Logs             | `kubectl logs -n ingress-nginx deployment/ingress-nginx-controller`            |
+|                           | View Last 100 Log Lines                | `kubectl logs -n ingress-nginx deployment/ingress-nginx-controller --tail=100` |
+| **Verification**          | Verify Pods                            | `kubectl get pods`                                                             |
+|                           | Verify Services                        | `kubectl get svc`                                                              |
+|                           | Verify Ingress Resources               | `kubectl get ingress`                                                          |
+|                           | Verify Ingress Controller Pods         | `kubectl get pods -n ingress-nginx`                                            |
+
