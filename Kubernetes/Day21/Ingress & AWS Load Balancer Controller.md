@@ -1,0 +1,504 @@
+# Kubernetes Ingress & AWS Load Balancer Controller
+
+---
+
+# Table of Contents
+
+1. [What is Ingress?](#1-what-is-ingress)
+2. [Why do we need Ingress?](#2-why-do-we-need-ingress)
+3. [Components of Ingress](#3-components-of-ingress)
+4. [Ingress Controller](#4-ingress-controller)
+5. [IngressClass](#5-ingressclass)
+6. [Ingress Resource](#6-ingress-resource)
+7. [Request Flow](#7-request-flow)
+8. [Types of Ingress Routing](#8-types-of-ingress-routing)
+9. [Path Types Explained](#9-path-types-explained)
+10. [NGINX Ingress Controller](#10-nginx-ingress-controller)
+11. [AWS Load Balancer Controller](#11-aws-load-balancer-controller)
+12. [TLS/SSL Termination](#12-tlsssl-termination)
+13. [Key Annotations Reference](#13-key-annotations-reference)
+14. [Target Type: IP vs Instance](#14-target-type-ip-vs-instance)
+15. [Health Checks](#15-health-checks)
+16. [NGINX vs AWS Load Balancer Controller](#16-nginx-vs-aws-load-balancer-controller)
+17. [Cost Considerations](#17-cost-considerations)
+18. [Common Errors & Troubleshooting](#18-common-errors--troubleshooting)
+19. [Best Practices](#19-best-practices)
+20. [Interview Quick-Fire Q&A](#20-interview-quick-fire-qa)
+
+---
+
+# 1. What is Ingress?
+
+Ingress is a Kubernetes API object that manages **external HTTP/HTTPS traffic** into the cluster.
+
+Instead of exposing every application using its own LoadBalancer Service, Ingress provides a centralized routing layer.
+
+```
+Internet
+    │
+    ▼
+Ingress
+    │
+    ├──► App1
+    ├──► App2
+    └──► App3
+```
+
+Ingress itself does nothing on its own — it is just a set of rules. An **Ingress Controller** is required to actually implement those rules.
+
+---
+
+# 2. Why do we need Ingress?
+
+**Without Ingress:**
+
+- Every application requires its own Service of type `LoadBalancer`.
+- Cloud providers create one external Load Balancer per Service.
+- Cost increases (each AWS ELB/ALB is billed hourly + per LCU).
+- Management becomes difficult — no central place for routing, TLS, or auth rules.
+
+**With Ingress:**
+
+- Centralized routing
+- Host-based routing
+- Path-based routing
+- SSL/TLS termination
+- Easier management
+- Support for authentication, rate-limiting, and rewrites (controller-dependent)
+
+---
+
+# 3. Components of Ingress
+
+An Ingress solution consists of three parts:
+
+| Component | Role |
+|---|---|
+| **Ingress Resource** | Defines *what* routing rules should exist |
+| **Ingress Controller** | Implements *how* the rules are enforced |
+| **IngressClass** | Tells Kubernetes *which controller* should handle a given resource |
+
+---
+
+# 4. Ingress Controller
+
+The Ingress Controller watches Kubernetes Ingress resources and configures the underlying proxy or cloud load balancer.
+
+Popular controllers:
+
+- NGINX Ingress Controller
+- AWS Load Balancer Controller
+- Traefik
+- HAProxy
+- Istio Gateway
+- Kong
+
+> **Note:** Kubernetes does not ship with a built-in Ingress Controller. You must install one — a common gotcha in interviews and real clusters alike.
+
+---
+
+# 5. IngressClass
+
+IngressClass tells Kubernetes **which controller** should process an Ingress.
+
+```yaml
+spec:
+  ingressClassName: alb
+```
+
+or
+
+```yaml
+spec:
+  ingressClassName: nginx
+```
+
+You can also define an `IngressClass` object and mark one as default cluster-wide:
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: alb
+  annotations:
+    ingressclass.kubernetes.io/is-default-class: "true"
+spec:
+  controller: ingress.k8s.aws/alb
+```
+
+---
+
+# 6. Ingress Resource
+
+The Ingress resource contains routing rules.
+
+```
+/iphone   → iphone-svc
+/android  → android-svc
+/         → desktop-svc
+```
+
+**Full YAML example:**
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+    - host: example.com
+      http:
+        paths:
+          - path: /iphone
+            pathType: Prefix
+            backend:
+              service:
+                name: iphone-svc
+                port:
+                  number: 80
+          - path: /android
+            pathType: Prefix
+            backend:
+              service:
+                name: android-svc
+                port:
+                  number: 80
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: desktop-svc
+                port:
+                  number: 80
+```
+
+---
+
+# 7. Request Flow
+
+```
+Client
+   │
+   ▼
+Load Balancer
+   │
+   ▼
+Ingress Controller
+   │
+   ▼
+Ingress Resource
+   │
+   ▼
+Service
+   │
+   ▼
+Pods
+```
+
+---
+
+# 8. Types of Ingress Routing
+
+## Path-based Routing
+
+```
+example.com/iphone
+example.com/android
+```
+
+## Host-based Routing
+
+```
+iphone.example.com
+android.example.com
+```
+
+Both can be combined in a single Ingress resource for more complex routing setups (e.g., multi-tenant apps).
+
+---
+
+# 9. Path Types Explained
+
+Kubernetes supports three `pathType` values — a common source of confusion:
+
+| pathType | Behavior | Example |
+|---|---|---|
+| **Exact** | Matches the URL path exactly, case-sensitive | `/app` matches only `/app` |
+| **Prefix** | Matches based on a URL path prefix split by `/` | `/app` matches `/app`, `/app/`, `/app/v1` |
+| **ImplementationSpecific** | Matching depends on the IngressClass/controller | Behavior varies by controller |
+
+---
+
+# 10. NGINX Ingress Controller
+
+**Workflow:**
+
+```
+Internet
+    │
+    ▼
+AWS Load Balancer
+    │
+    ▼
+NGINX Ingress Controller
+    │
+    ▼
+Ingress Resources
+    │
+    ▼
+Services
+```
+
+**Characteristics:**
+
+- Install one controller (typically via Helm).
+- A Service of type `LoadBalancer` exposes the controller.
+- AWS creates one external Load Balancer (Classic/NLB depending on setup).
+- Multiple Ingress resources usually share that Load Balancer.
+- Supports URL rewriting via annotations.
+- Runs as pods inside the cluster — routing logic is handled in-cluster.
+
+**Install via Helm:**
+
+```bash
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm install ingress-nginx ingress-nginx/ingress-nginx \
+  --namespace ingress-nginx --create-namespace
+```
+
+**Common rewrite annotation:**
+
+```yaml
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+```
+
+**Summary:**
+
+> **One NGINX Controller → One External Load Balancer → Many Ingress Resources**
+
+---
+
+# 11. AWS Load Balancer Controller
+
+**Workflow:**
+
+```
+Ingress 1 ─► ALB 1
+Ingress 2 ─► ALB 2
+Ingress 3 ─► ALB 3
+```
+
+**Characteristics:**
+
+- Watches Ingress resources directly via the Kubernetes API.
+- Creates AWS ALBs automatically.
+- Creates Target Groups automatically.
+- Registers Pod IPs (or Node instances) automatically.
+- Updates listeners and rules automatically as Ingress changes.
+- Requires an IAM policy + IRSA (IAM Roles for Service Accounts) to provision AWS resources.
+
+**Default behavior:**
+
+> **One Ingress → One ALB**
+
+**Exception — sharing ALBs:**
+
+If multiple Ingresses share the same group name, they share one ALB:
+
+```yaml
+metadata:
+  annotations:
+    alb.ingress.kubernetes.io/group.name: shared-alb
+```
+
+**Minimal ALB Ingress example:**
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: alb-ingress
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+spec:
+  rules:
+    - host: app.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: app-svc
+                port:
+                  number: 80
+```
+
+**Install (Helm):**
+
+```bash
+helm repo add eks https://aws.github.io/eks-charts
+helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
+  -n kube-system \
+  --set clusterName=<your-cluster-name> \
+  --set serviceAccount.create=false \
+  --set serviceAccount.name=aws-load-balancer-controller
+```
+
+---
+
+# 12. TLS/SSL Termination
+
+Both controllers support TLS termination at the load balancer/proxy layer.
+
+**Generic Ingress TLS block:**
+
+```yaml
+spec:
+  tls:
+    - hosts:
+        - example.com
+      secretName: example-tls-secret
+```
+
+**AWS ALB — using ACM certificate instead of a Kubernetes Secret:**
+
+```yaml
+metadata:
+  annotations:
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:123456789012:certificate/abcd-1234
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}, {"HTTP":80}]'
+    alb.ingress.kubernetes.io/ssl-redirect: '443'
+```
+
+| Approach | Used By | Cert Source |
+|---|---|---|
+| Kubernetes TLS Secret | NGINX Ingress | cert-manager / manually created secret |
+| ACM Certificate ARN | AWS LB Controller | AWS Certificate Manager |
+
+---
+
+# 13. Key Annotations Reference
+
+**NGINX Ingress Controller**
+
+| Annotation | Purpose |
+|---|---|
+| `nginx.ingress.kubernetes.io/rewrite-target` | Rewrite request path |
+| `nginx.ingress.kubernetes.io/ssl-redirect` | Force HTTPS redirect |
+| `nginx.ingress.kubernetes.io/proxy-body-size` | Max upload size |
+| `nginx.ingress.kubernetes.io/whitelist-source-range` | IP allowlisting |
+
+**AWS Load Balancer Controller**
+
+| Annotation | Purpose |
+|---|---|
+| `alb.ingress.kubernetes.io/scheme` | `internet-facing` or `internal` |
+| `alb.ingress.kubernetes.io/target-type` | `ip` or `instance` |
+| `alb.ingress.kubernetes.io/group.name` | Share one ALB across Ingresses |
+| `alb.ingress.kubernetes.io/healthcheck-path` | Custom health check path |
+| `alb.ingress.kubernetes.io/certificate-arn` | ACM cert for HTTPS |
+| `alb.ingress.kubernetes.io/load-balancer-attributes` | Idle timeout, access logs, etc. |
+
+---
+
+# 14. Target Type: IP vs Instance
+
+| Target Type | Traffic Sent To | Requires |
+|---|---|---|
+| **instance** | Node's `NodePort` | Service type `NodePort` |
+| **ip** | Pod IP directly | VPC CNI (default on EKS), works with any Service type |
+
+`target-type: ip` is the recommended and most common mode on EKS since it routes traffic straight to Pods, skipping the extra kube-proxy hop and giving more accurate load distribution.
+
+---
+
+# 15. Health Checks
+
+The AWS Load Balancer Controller configures Target Group health checks automatically, but they can be tuned:
+
+```yaml
+metadata:
+  annotations:
+    alb.ingress.kubernetes.io/healthcheck-path: /healthz
+    alb.ingress.kubernetes.io/healthcheck-interval-seconds: '15'
+    alb.ingress.kubernetes.io/healthcheck-timeout-seconds: '5'
+    alb.ingress.kubernetes.io/healthy-threshold-count: '2'
+    alb.ingress.kubernetes.io/unhealthy-threshold-count: '2'
+```
+
+For NGINX, liveness/readiness is generally handled via standard Kubernetes probes on the backend Pods, since NGINX itself just proxies to the Service.
+
+---
+
+# 16. NGINX vs AWS Load Balancer Controller
+
+| Feature | NGINX | AWS LB Controller |
+|---|---|---|
+| Controller exposed by LoadBalancer Service | Yes | No |
+| One controller → one LB | Usually Yes | No |
+| One Ingress → one ALB | No | Yes (default) |
+| URL Rewrite | Supported | Not Supported |
+| Creates AWS Target Groups | No | Yes |
+| Runs inside cluster (extra hop) | Yes | No (native ALB routing) |
+| TLS cert source | K8s Secret / cert-manager | AWS ACM |
+| Best for | Multi-cloud, portability, advanced rewrites | AWS-native, lower latency, deep AWS integration |
+
+---
+
+# 17. Cost Considerations
+
+- **NGINX Ingress:** One NLB/ELB for the controller regardless of how many Ingress resources exist behind it — cheaper at scale with many small apps.
+- **AWS LB Controller:** One ALB per Ingress by default — costs scale with the number of distinct Ingress resources, unless `group.name` is used to consolidate them onto a shared ALB.
+- ALB pricing includes hourly cost + LCU (Load Balancer Capacity Unit) usage, so consolidating with `group.name` is a common cost-optimization technique in production clusters.
+
+---
+
+# 18. Common Errors & Troubleshooting
+
+| Symptom | Likely Cause | Fix |
+|---|---|---|
+| `ADDRESS` stays empty on `kubectl get ingress` | Controller not installed/running, or wrong `ingressClassName` | Verify controller pods are running; check IngressClass name matches |
+| ALB created but 503 from target group | Wrong `target-type`, security group blocking traffic, or failing health check | Check SG rules allow controller → pod traffic; verify health check path |
+| `kubectl describe ingress` shows no events | AWS LB Controller missing IAM permissions | Verify IRSA role has the AWSLoadBalancerController IAM policy attached |
+| NGINX 404 on valid path | Missing/incorrect `pathType`, or `rewrite-target` misconfigured | Check `pathType: Prefix` vs `Exact`, confirm rewrite annotation |
+| ALB not created at all | Webhook not ready, or CRDs missing | Check `aws-load-balancer-controller` pod logs in `kube-system` |
+| Certificate not applying (ALB) | ACM cert not validated, or wrong region | Confirm ACM cert status is "Issued" and in the same region as the ALB |
+
+---
+
+# 19. Best Practices
+
+- Use `target-type: ip` on EKS for direct pod routing and better load distribution.
+- Use `group.name` to consolidate ALBs across services and reduce cost.
+- Terminate TLS at the load balancer (ALB/NGINX) rather than in application pods, unless end-to-end encryption is a compliance requirement.
+- Set explicit health check paths rather than relying on defaults, especially for apps without a `/` health endpoint.
+- Version-pin the AWS Load Balancer Controller Helm chart to avoid unexpected breaking changes on cluster upgrades.
+- Use `internal` scheme for services that should never be internet-facing.
+- Store TLS secrets via `cert-manager` for NGINX instead of manually rotating certificates.
+
+---
+
+# 20. Interview Quick-Fire Q&A
+
+**Q: Does Ingress work without an Ingress Controller?**
+A: No. The Ingress resource is just a config object; without a controller, nothing implements the routing rules.
+
+**Q: What's the default relationship between Ingress and ALB in AWS LB Controller?**
+A: One Ingress creates one ALB, unless `group.name` is used to share one ALB across multiple Ingresses.
+
+**Q: Why prefer `target-type: ip` over `instance` on EKS?**
+A: It routes traffic directly to Pod IPs via VPC CNI, avoiding the extra NodePort/kube-proxy hop and giving more accurate load balancing.
+
+**Q: How does NGINX Ingress differ architecturally from AWS LB Controller?**
+A: NGINX runs as pods inside the cluster and is exposed via one LoadBalancer Service, acting as an in-cluster reverse proxy. AWS LB Controller provisions native AWS ALBs outside the cluster, with no in-cluster proxy hop.
+
+**Q: Where does TLS certificate management differ between the two?**
+A: NGINX typically uses a Kubernetes TLS Secret (often via cert-manager); AWS LB Controller references an ACM certificate ARN directly.
