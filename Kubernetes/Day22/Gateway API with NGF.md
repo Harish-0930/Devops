@@ -588,9 +588,43 @@ helm install ngf \
   --set nginx.service.type=LoadBalancer
 ```
 
-**Step 4:** Repeat [Step 4 through Step 6](#step-4-deploy-application-manifests) from the KIND setup (application manifests, Gateway, and HTTPRoutes) — no changes needed.
+**Step 4:** Repeat [Step 4 and Step 6 Skip Step 5](#step-4-deploy-application-manifests) from the KIND setup (application manifests, Gateway, and HTTPRoutes) — no changes needed.
+Follow below **Step 5** while applying the gateway manifest.
 
-**Step 5:** Check connectivity using the AWS Load Balancer address:
+**Step 5:** Load Balancer will be created as a `internal` facing, change it to `internet-facing`
+- Updated **Gateway** manifest file
+```yaml
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: gateway
+  namespace: ngf-gatewayapi-ns
+spec:
+  gatewayClassName: nginx
+
+  infrastructure:
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-type: "external"
+      service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
+      service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "ip"
+
+  listeners:
+  - name: http
+    protocol: HTTP
+    port: 80
+    allowedRoutes:
+      namespaces:
+        from: All
+```
+#### Apply:
+```
+kubectl apply -f gateway.yaml
+```
+> The annotations are instructions for the infrastructure that the controller creates.   These are not annotations on the Gateway itself.
+
+> Gateway API aims to eliminate annotations for standard networking behavior, not for cloud-provider-specific infrastructure behavior.
+
+**Step 6:** Check connectivity using the AWS Load Balancer address:
 
 ```bash
 curl http://<AWS-LB>/android/
