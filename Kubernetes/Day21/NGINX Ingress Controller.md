@@ -9,6 +9,9 @@
 5. Cleanup
 6. Usefull commands
 
+## How NGINX Ingress works
+![NGINX Ingress](https://raw.githubusercontent.com/Harish-0930/Devops/main/Kubernetes/pictures/NGINX%20Ingress%20in%20kubernetes.png)
+
 ## 1. **Installing NGINX Ingress Controller**
 ## Step 1: Add the Helm Repository
 
