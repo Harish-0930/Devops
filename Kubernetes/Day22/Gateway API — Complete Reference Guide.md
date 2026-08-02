@@ -2,6 +2,8 @@
 
 > A structured study guide covering Kubernetes Ingress, its limitations, and how the Gateway API solves them — with architecture diagrams, comparisons, and interview Q&A.
 
+![Gateway API Arch](https://raw.githubusercontent.com/Harish-0930/Devops/main/Kubernetes/pictures/Gateway%20API%20K8S.png)
+
 ---
 
 ## Table of Contents
