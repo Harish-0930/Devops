@@ -1,5 +1,7 @@
 # Kubernetes Ingress - AWS Load Balancer Controller
-------------------------------------------------------------------------
+
+Deploying AWS Load Balancer Controller with the Ingress to route HTTP traffic to multiple backend applications
+![NGINX Ingress](https://raw.githubusercontent.com/Harish-0930/Devops/main/Kubernetes/pictures/ALB%20Ingress%20in%20kubernetes.png)
 
 Install Required Tools
 
