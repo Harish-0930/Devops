@@ -138,6 +138,61 @@ git branch -d <branch-name>
 ```bash
 git push <alias> :<branch-name>
 ```
+---
+
+## Compare local commits with GitHub
+
+First, fetch the latest remote changes:
+
+```
+git fetch origin
+```
+
+Commits on GitHub but missing locally:
+
+```
+git log Main..origin/Main --oneline
+```
+
+Commits locally but missing on GitHub:
+
+```
+git log origin/Main..Main --oneline
+```
+
+Compare both sides together:
+
+```
+git log --oneline --left-right Main...origin/Main
+```
+
+## Check file-level differences
+
+To see the code changes between your local branch and GitHub:
+
+```
+git diff origin/Main
+```
+
+To list only changed filenames:
+
+```
+git diff --name-status origin/Main
+```
+
+## If GitHub has commits missing locally
+
+If you want to bring those changes into your local branch, use:
+
+```
+git merge origin/Main
+```
+
+If your local branch has no unique commits and you simply want to update it, you can instead use:
+
+```
+git pull origin Main
+```
 
 ---
 
