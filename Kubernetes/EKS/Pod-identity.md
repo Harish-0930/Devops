@@ -314,6 +314,9 @@ Below is the complete flow when application code inside a pod calls an AWS servi
 9. **The SDK signs the actual AWS API request** (e.g., SigV4 for S3) using those temporary credentials.
 10. **The target AWS service** (S3, DynamoDB, etc.) evaluates the IAM policies attached to the assumed role and returns the result.
 
+![Pod Identity request flow](https://raw.githubusercontent.com/Harish-0930/Devops/main/Kubernetes/pictures/pod_identity_request_flow.png)
+
+
 **Key takeaway:** The application code never handles credentials explicitly. Everything happens transparently through the SDK's default credential provider chain.
 
 ---
