@@ -168,6 +168,7 @@ A directory-by-directory index of the files in this repository. Select a file to
 ### EKS
 - [EKS-Cluster-Creation ](Kubernetes/EKS/EKS-Cluster-Creation.md )
 - [Pod-identity ](Kubernetes/EKS/Pod-identity.md )
+- [EKS-IRSA](/Kubernetes/EKS/EKS-IRSA.md)
 
 ## Linux
 ### Day01
